@@ -5,14 +5,24 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..core.cache import CacheBackend, create_cache_backend
+from ..core.config import settings
 from ..core.database import get_db
 from ..data.repositories.book_repository import BookRepository
 from ..domain.services.book_service import BookService
 from ..external.openlibrary.client import OpenLibraryClient
-from ..core.config import settings
 
 
 # ========== EXTERNAL CLIENTS (Singletons) ==========
+
+@lru_cache
+def get_cache_backend() -> CacheBackend:
+    """Get singleton cache backend."""
+    return create_cache_backend(
+        backend=settings.cache_backend,
+        redis_url=settings.redis_url,
+    )
+
 
 @lru_cache
 def get_openlibrary_client() -> OpenLibraryClient:
@@ -24,6 +34,8 @@ def get_openlibrary_client() -> OpenLibraryClient:
     return OpenLibraryClient(
         base_url=settings.openlibrary_base_url,
         timeout=settings.openlibrary_timeout,
+        cache=get_cache_backend(),
+        cache_ttl=settings.openlibrary_cache_ttl,
     )
 
 
@@ -45,6 +57,7 @@ async def get_book_repository(
 async def get_book_service(
     book_repo: Annotated[BookRepository, Depends(get_book_repository)],
     ol_client: Annotated[OpenLibraryClient, Depends(get_openlibrary_client)],
+    cache: Annotated[CacheBackend, Depends(get_cache_backend)],
 ) -> BookService:
     """
     Создать BookService с внедренными зависимостями.
@@ -58,6 +71,8 @@ async def get_book_service(
     return BookService(
         book_repository=book_repo,
         openlibrary_client=ol_client,
+        cache=cache,
+        search_cache_ttl=settings.search_cache_ttl,
     )
 
 

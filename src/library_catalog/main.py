@@ -4,11 +4,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .api.dependencies import get_cache_backend
+from .api.v1.routers import books, health
 from .core.config import settings
 from .core.database import dispose_engine
 from .core.exceptions import register_exception_handlers
 from .core.logging_config import setup_logging
-from .api.v1.routers import books, health
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
+    await get_cache_backend().close()
     await dispose_engine()
     logger.info("👋 Application stopped")
 

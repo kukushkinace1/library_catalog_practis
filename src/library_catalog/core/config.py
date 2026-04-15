@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["*"]
     openlibrary_base_url: str = "https://openlibrary.org"
     openlibrary_timeout: float = 10.0
+    cache_backend: Literal["memory", "redis"] = "memory"
+    redis_url: str | None = None
+    openlibrary_cache_ttl: int = 3600
+    search_cache_ttl: int = 300
 
     model_config = SettingsConfigDict(
         env_file=".env",
