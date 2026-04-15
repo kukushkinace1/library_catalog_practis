@@ -1,7 +1,7 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-from src.library_catalog.core.config import settings
+from .config import settings
 
 
 class Base(DeclarativeBase):
@@ -30,3 +30,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         except Exception:
             await session.rollback()
             raise
+
+async def dispose_engine() -> None:
+    """Закрыть все соединения с БД."""
+    await engine.dispose()
