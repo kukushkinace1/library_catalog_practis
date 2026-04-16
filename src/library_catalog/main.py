@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api.dependencies import get_cache_backend
-from .api.v1.routers import books, health
+from .api.v1.routers import auth, books, health
 from .core.config import settings
 from .core.database import dispose_engine
 from .core.exceptions import register_exception_handlers
@@ -69,6 +69,10 @@ register_exception_handlers(app)
 # Версия 1 API
 app.include_router(
     books.router,
+    prefix=settings.api_v1_prefix,
+)
+app.include_router(
+    auth.router,
     prefix=settings.api_v1_prefix,
 )
 app.include_router(

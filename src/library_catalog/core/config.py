@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     redis_url: str | None = None
     openlibrary_cache_ttl: int = 3600
     search_cache_ttl: int = 300
+    jwt_secret_key: str = "change-me-in-production"
+    jwt_access_token_expire_minutes: int = 60
 
     model_config = SettingsConfigDict(
         env_file=".env",

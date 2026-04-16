@@ -11,7 +11,7 @@ from ..schemas.book import (
     BookFilters,
 )
 from ..schemas.common import PaginatedResponse, PaginationParams
-from ...dependencies import BookServiceDep
+from ...dependencies import AdminUserDep, BookServiceDep, CurrentUserDep
 
 router = APIRouter(prefix="/books", tags=["Books"])
 
@@ -26,6 +26,7 @@ router = APIRouter(prefix="/books", tags=["Books"])
 async def create_book(
     book_data: BookCreate,
     service: BookServiceDep,
+    admin_user: AdminUserDep,
 ):
     """
     Создать новую книгу.
@@ -49,6 +50,7 @@ async def create_book(
 )
 async def get_books(
     service: BookServiceDep,
+    current_user: CurrentUserDep,
     pagination: Annotated[PaginationParams, Depends()],
     title: str | None = Query(None, description="Поиск по названию"),
     author: str | None = Query(None, description="Поиск по автору"),
@@ -92,6 +94,7 @@ async def get_books(
 async def get_book(
     book_id: UUID,
     service: BookServiceDep,
+    current_user: CurrentUserDep,
 ):
     """
     Получить книгу по ID.
@@ -115,6 +118,7 @@ async def update_book(
     book_id: UUID,
     book_data: BookUpdate,
     service: BookServiceDep,
+    admin_user: AdminUserDep,
 ):
     """
     Обновить книгу.
@@ -141,6 +145,7 @@ async def update_book(
 async def delete_book(
     book_id: UUID,
     service: BookServiceDep,
+    admin_user: AdminUserDep,
 ):
     """
     Удалить книгу.

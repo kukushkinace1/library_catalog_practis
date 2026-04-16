@@ -12,7 +12,7 @@ from src.library_catalog.core.config import settings
 from src.library_catalog.core.database import Base
 
 # Импортировать все модели (ОБЯЗАТЕЛЬНО!)
-from src.library_catalog.data.models import book  # noqa
+from src.library_catalog.data.models import book, user  # noqa
 
 # this is the Alembic Config object
 config = context.config
