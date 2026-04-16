@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+pytest-cache-files-*/
+.mypy_cache/
+.ruff_cache/
+.env
+test_openlibrary.py
+tests/
+README.md
+DETAILED_ASSIGNMENT_FIXED (1).md
